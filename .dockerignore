@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules
+pnpm-debug.log
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Testing
+coverage
+.nyc_output
+
+# Documentation
+docs
+README.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Package manager locks (not needed in container)
+# pnpm-lock.yaml is needed for reproducible builds
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Other
+.versionrc
+.husky
+.lint-staged.json
+.prettierignore
+postcss.config.js
+tailwind.config.js
+tsconfig.json
+next.config.mjs
+eslintrc.json

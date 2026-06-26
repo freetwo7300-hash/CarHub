@@ -1,0 +1,30 @@
+version: 2
+
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "Mostafa-SAID7"
+    assignees:
+      - "Mostafa-SAID7"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    pull-request-branch-name:
+      separator: "/"
+    labels:
+      - "dependencies"
+      - "npm"
+    allow:
+      - dependency-type: "production"
+      - dependency-type: "development"
+    rebase-strategy: "auto"
+    ignore:
+      # Add packages to ignore if needed
+      # - dependency-name: "package-name"

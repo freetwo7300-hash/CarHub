@@ -12,6 +12,19 @@ export const metadata: Metadata = {
   title: "CarHub - Community Car Maintenance",
   description: "Connect with car enthusiasts, share maintenance guides, and discover events",
   generator: "v0.app",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/placeholder-logo.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CarHub",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 }
 
 export default function RootLayout({
@@ -21,7 +34,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>{children}</body>
+      <head>
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="CarHub" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
+      <body className={`font-sans antialiased`}>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/service-worker.js'); }`,
+          }}
+        />
+      </body>
     </html>
   )
 }

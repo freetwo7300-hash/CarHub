@@ -1,0 +1,18 @@
+# CarHub Code Owners
+# This file defines who is responsible for different parts of the codebase
+
+* @Mostafa-SAID7
+
+# Documentation
+/docs/ @Mostafa-SAID7
+README.md @Mostafa-SAID7
+
+# Configuration
+/.github/ @Mostafa-SAID7
+Dockerfile @Mostafa-SAID7
+docker-compose.yml @Mostafa-SAID7
+
+# App
+/app/ @Mostafa-SAID7
+/components/ @Mostafa-SAID7
+/lib/ @Mostafa-SAID7
