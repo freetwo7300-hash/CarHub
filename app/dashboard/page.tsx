@@ -1,208 +1,37 @@
-"import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Bookmark, MessageCircle, Calendar, TrendingUp } from "@/lib/icons"
-import Navigation from "@/components/navigation"
-import Link from "next/link"
-
-export default async function DashboardPage() {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
-      {/* Header */}
-      <section className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">Welcome to Your Dashboard</h1>
-          <p className="text-primary-foreground/90">Quick access to your favorite content and activities</p>
-        </div>
-      </section>
-
-      {/* Quick Stats */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm">Saved Items</p>
-                  <p className="text-3xl font-bold mt-2">0</p>
-                </div>
-                <Bookmark className="w-8 h-8 text-accent" />
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm">Forum Posts</p>
-                  <p className="text-3xl font-bold mt-2">0</p>
-                </div>
-                <MessageCircle className="w-8 h-8 text-accent" />
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm">Events Joined</p>
-                  <p className="text-3xl font-bold mt-2">0</p>
-                </div>
-                <Calendar className="w-8 h-8 text-accent" />
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm">Reputation</p>
-                  <p className="text-3xl font-bold mt-2">0</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-accent" />
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Recent Activity */}
-      <section className="py-8 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-6">Recent Activity</h2>
-          <p className="text-muted-foreground">Your recent activities will appear here</p>
-        </div>
-      </section>
-
-      {/* Saved Items */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-6">Saved Items</h2>
-          <Card className="p-8 text-center">
-            <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <p className="text-muted-foreground mb-4">No saved items yet</p>
-            <div className="flex gap-2 justify-center">
-              <Link href="/forum">
-                <Button variant="outline">Explore Forum</Button>
-              </Link>
-              <Link href="/events">
-                <Button variant="outline">Browse Events</Button>
-              </Link>
-            </div>
-          </Card>
-        </div>
-      </section>
-    </div>
-  )
-}"
+'use client'
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MessageCircle, BookOpen, Calendar, Heart, TrendingUp, Clock, Plus } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
+import { StatsCard, QuickActionCard, ActivityItem, EmptySection } from "@/components/dashboard"
 import Link from "next/link"
-
-interface DashboardItem {
-  id: string
-  title: string
-  type: "forum" | "guide" | "event"
-  date: string
-  status: string
-}
-
-interface SavedItem {
-  id: string
-  title: string
-  type: "forum" | "guide" | "event"
-  savedDate: string
-}
-
-const mockDashboard = {
-  stats: {
-    forumPosts: 156,
-    guidesCreated: 12,
-    eventsAttended: 24,
-    reputation: 2450,
-  },
-  recentActivity: [
-    {
-      id: "1",
-      title: "Replied to 'Best practices for oil change intervals'",
-      type: "forum" as const,
-      date: "2 hours ago",
-      status: "Active",
-    },
-    {
-      id: "2",
-      title: "Completed 'Oil Change Workshop'",
-      type: "event" as const,
-      date: "1 day ago",
-      status: "Completed",
-    },
-    {
-      id: "3",
-      title: "Created guide: 'Brake Pad Replacement'",
-      type: "guide" as const,
-      date: "3 days ago",
-      status: "Published",
-    },
-    {
-      id: "4",
-      title: "Attended 'Monthly Car Enthusiasts Meetup'",
-      type: "event" as const,
-      date: "1 week ago",
-      status: "Completed",
-    },
-  ],
-  savedItems: [
-    {
-      id: "1",
-      title: "Engine Diagnostics Guide",
-      type: "guide" as const,
-      savedDate: "2 days ago",
-    },
-    {
-      id: "2",
-      title: "Transmission Fluid Change Discussion",
-      type: "forum" as const,
-      savedDate: "5 days ago",
-    },
-    {
-      id: "3",
-      title: "Electric Vehicle Basics Workshop",
-      type: "event" as const,
-      savedDate: "1 week ago",
-    },
-  ],
-  upcomingEvents: [
-    {
-      id: "1",
-      title: "Tire Rotation & Balancing Workshop",
-      type: "event" as const,
-      date: "Nov 20, 2025",
-      status: "Registered",
-    },
-    {
-      id: "2",
-      title: "Weekend Car Show",
-      type: "event" as const,
-      date: "Nov 23, 2025",
-      status: "Interested",
-    },
-  ],
-}
+import type { DashboardActivity, SavedItem, DashboardStats } from "@/types"
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
 
+  // Empty dashboard state - data would come from API
+  const stats: DashboardStats = {
+    forumPosts: 0,
+    guidesCreated: 0,
+    eventsAttended: 0,
+    reputation: 0,
+  }
+
+  const recentActivity: DashboardActivity[] = []
+  const savedItems: SavedItem[] = []
+  const upcomingEvents: any[] = []
+
   const getIcon = (type: string) => {
     switch (type) {
       case "forum":
-        return <MessageCircle className="w-5 h-5" />
+        return <div className="w-5 h-5"><MessageCircle /></div>
       case "guide":
-        return <BookOpen className="w-5 h-5" />
+        return <div className="w-5 h-5"><BookOpen /></div>
       case "event":
-        return <Calendar className="w-5 h-5" />
+        return <div className="w-5 h-5"><Calendar /></div>
       default:
         return null
     }
@@ -238,85 +67,48 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Quick Stats */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Forum Posts</p>
-                  <p className="text-3xl font-bold text-accent">{mockDashboard.stats.forumPosts}</p>
-                </div>
-                <MessageCircle className="w-8 h-8 text-accent opacity-50" />
-              </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Guides Created</p>
-                  <p className="text-3xl font-bold text-accent">{mockDashboard.stats.guidesCreated}</p>
-                </div>
-                <BookOpen className="w-8 h-8 text-accent opacity-50" />
-              </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Events Attended</p>
-                  <p className="text-3xl font-bold text-accent">{mockDashboard.stats.eventsAttended}</p>
-                </div>
-                <Calendar className="w-8 h-8 text-accent opacity-50" />
-              </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Reputation</p>
-                  <p className="text-3xl font-bold text-accent">{mockDashboard.stats.reputation}</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-accent opacity-50" />
-              </div>
-            </Card>
+            <StatsCard
+              label="Forum Posts"
+              value={stats.forumPosts}
+              icon={<div className="w-8 h-8"><MessageCircle /></div>}
+            />
+            <StatsCard
+              label="Guides Created"
+              value={stats.guidesCreated}
+              icon={<div className="w-8 h-8"><BookOpen /></div>}
+            />
+            <StatsCard
+              label="Events Attended"
+              value={stats.eventsAttended}
+              icon={<div className="w-8 h-8"><Calendar /></div>}
+            />
+            <StatsCard
+              label="Reputation"
+              value={stats.reputation}
+              icon={<div className="w-8 h-8"><TrendingUp /></div>}
+            />
           </div>
 
           {/* Quick Actions */}
           <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <Link href="/forum/new">
-              <Card className="p-6 hover:shadow-lg transition-all cursor-pointer hover:border-accent">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-accent/10 rounded-lg">
-                    <Plus className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">New Discussion</h3>
-                    <p className="text-sm text-muted-foreground">Start a forum post</p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/guides">
-              <Card className="p-6 hover:shadow-lg transition-all cursor-pointer hover:border-accent">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-accent/10 rounded-lg">
-                    <BookOpen className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Create Guide</h3>
-                    <p className="text-sm text-muted-foreground">Share your knowledge</p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-            <Link href="/events">
-              <Card className="p-6 hover:shadow-lg transition-all cursor-pointer hover:border-accent">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-accent/10 rounded-lg">
-                    <Calendar className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Browse Events</h3>
-                    <p className="text-sm text-muted-foreground">Find meetups & workshops</p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
+            <QuickActionCard
+              title="New Discussion"
+              description="Start a forum post"
+              href="/forum/new"
+              icon={<div className="w-5 h-5"><Plus /></div>}
+            />
+            <QuickActionCard
+              title="Create Guide"
+              description="Share your knowledge"
+              href="/guides"
+              icon={<div className="w-5 h-5"><BookOpen /></div>}
+            />
+            <QuickActionCard
+              title="Browse Events"
+              description="Find meetups & workshops"
+              href="/events"
+              icon={<div className="w-5 h-5"><Calendar /></div>}
+            />
           </div>
 
           {/* Tabs */}
@@ -331,28 +123,32 @@ export default function DashboardPage() {
             <TabsContent value="overview" className="space-y-4">
               <Card className="p-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Clock className="w-6 h-6" />
+                  <div className="w-6 h-6">
+                    <Clock />
+                  </div>
                   Recent Activity
                 </h2>
-                <div className="space-y-4">
-                  {mockDashboard.recentActivity.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start justify-between p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className={`p-2 rounded ${getTypeColor(item.type)}`}>{getIcon(item.type)}</div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{item.title}</h3>
-                          <p className="text-sm text-muted-foreground">{item.date}</p>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs font-semibold rounded flex-shrink-0">
-                        {item.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {recentActivity.length > 0 ? (
+                  <div className="space-y-4">
+                    {recentActivity.map((item) => (
+                      <ActivityItem
+                        key={item.id}
+                        icon={getIcon(item.type)}
+                        typeColor={getTypeColor(item.type)}
+                        title={item.title}
+                        date={item.date}
+                        status={item.status}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptySection
+                    icon={<Clock />}
+                    title="No Recent Activity"
+                    description="No recent activity yet"
+                    actions={[{ label: "Get Started", href: "/forum" }]}
+                  />
+                )}
               </Card>
             </TabsContent>
 
@@ -360,28 +156,36 @@ export default function DashboardPage() {
             <TabsContent value="saved" className="space-y-4">
               <Card className="p-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Heart className="w-6 h-6" />
+                  <div className="w-6 h-6">
+                    <Heart />
+                  </div>
                   Saved Items
                 </h2>
-                <div className="space-y-4">
-                  {mockDashboard.savedItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start justify-between p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className={`p-2 rounded ${getTypeColor(item.type)}`}>{getIcon(item.type)}</div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{item.title}</h3>
-                          <p className="text-sm text-muted-foreground">Saved {item.savedDate}</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm" className="flex-shrink-0 bg-transparent">
-                        View
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                {savedItems.length > 0 ? (
+                  <div className="space-y-4">
+                    {savedItems.map((item) => (
+                      <ActivityItem
+                        key={item.id}
+                        icon={getIcon(item.resourceType)}
+                        typeColor={getTypeColor(item.resourceType)}
+                        title={item.resourceId}
+                        date="Saved recently"
+                        status="Saved"
+                        showViewButton={true}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptySection
+                    icon={<Heart />}
+                    title="No Saved Items"
+                    description="No saved items yet"
+                    actions={[
+                      { label: "Explore Forum", href: "/forum" },
+                      { label: "Browse Guides", href: "/guides" },
+                    ]}
+                  />
+                )}
               </Card>
             </TabsContent>
 
@@ -389,28 +193,32 @@ export default function DashboardPage() {
             <TabsContent value="upcoming" className="space-y-4">
               <Card className="p-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Calendar className="w-6 h-6" />
+                  <div className="w-6 h-6">
+                    <Calendar />
+                  </div>
                   Upcoming Events
                 </h2>
-                <div className="space-y-4">
-                  {mockDashboard.upcomingEvents.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start justify-between p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className={`p-2 rounded ${getTypeColor(item.type)}`}>{getIcon(item.type)}</div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{item.title}</h3>
-                          <p className="text-sm text-muted-foreground">{item.date}</p>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-semibold rounded flex-shrink-0">
-                        {item.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {upcomingEvents.length > 0 ? (
+                  <div className="space-y-4">
+                    {upcomingEvents.map((item) => (
+                      <ActivityItem
+                        key={item.id}
+                        icon={getIcon(item.type)}
+                        typeColor={getTypeColor(item.type)}
+                        title={item.title}
+                        date={item.date}
+                        status={item.status}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptySection
+                    icon={<Calendar />}
+                    title="No Upcoming Events"
+                    description="No upcoming events"
+                    actions={[{ label: "Explore Events", href: "/events" }]}
+                  />
+                )}
               </Card>
             </TabsContent>
           </Tabs>

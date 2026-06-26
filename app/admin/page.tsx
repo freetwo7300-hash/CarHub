@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, MessageCircle, BookOpen, TrendingUp, AlertCircle, CheckCircle, Trash2, Ban, Search } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
 import { Input } from "@/components/ui/input"
 
 interface User {
@@ -180,7 +180,9 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-accent">{mockStats.totalUsers}</p>
                   <p className="text-xs text-muted-foreground mt-1">{mockStats.activeUsers} active</p>
                 </div>
-                <Users className="w-8 h-8 text-accent opacity-50" />
+                <div className="w-8 h-8 text-accent opacity-50">
+                  <Users />
+                </div>
               </div>
             </Card>
             <Card className="p-6 hover:shadow-lg transition-shadow">
@@ -190,7 +192,9 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-accent">{mockStats.totalPosts}</p>
                   <p className="text-xs text-muted-foreground mt-1">Forum discussions</p>
                 </div>
-                <MessageCircle className="w-8 h-8 text-accent opacity-50" />
+                <div className="w-8 h-8 text-accent opacity-50">
+                  <MessageCircle />
+                </div>
               </div>
             </Card>
             <Card className="p-6 hover:shadow-lg transition-shadow">
@@ -200,7 +204,9 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-accent">{mockStats.totalGuides + mockStats.totalEvents}</p>
                   <p className="text-xs text-muted-foreground mt-1">Guides & events</p>
                 </div>
-                <BookOpen className="w-8 h-8 text-accent opacity-50" />
+                <div className="w-8 h-8 text-accent opacity-50">
+                  <BookOpen />
+                </div>
               </div>
             </Card>
             <Card className="p-6 hover:shadow-lg transition-shadow border-red-200 dark:border-red-900">
@@ -210,7 +216,9 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-red-600">{mockStats.flaggedContent}</p>
                   <p className="text-xs text-muted-foreground mt-1">Needs review</p>
                 </div>
-                <AlertCircle className="w-8 h-8 text-red-600 opacity-50" />
+                <div className="w-8 h-8 text-red-600 opacity-50">
+                  <AlertCircle />
+                </div>
               </div>
             </Card>
           </div>
@@ -228,7 +236,9 @@ export default function AdminPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-accent" />
+                    <div className="w-5 h-5 text-accent">
+                      <TrendingUp />
+                    </div>
                     Community Growth
                   </h3>
                   <div className="space-y-3">
@@ -269,7 +279,9 @@ export default function AdminPage() {
 
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
+                    <div className="w-5 h-5 text-red-600">
+                      <AlertCircle />
+                    </div>
                     System Alerts
                   </h3>
                   <div className="space-y-3">
@@ -348,13 +360,17 @@ export default function AdminPage() {
                                 onClick={() => handleSuspendUser(user.id)}
                               >
                                 {user.status === "suspended" ? (
-                                  <>
-                                    <CheckCircle className="w-4 h-4 mr-1" />
-                                    Unsuspend
-                                  </>
+                  <>
+                    <div className="w-4 h-4 mr-1">
+                      <CheckCircle />
+                    </div>
+                    Unsuspend
+                  </>
                                 ) : (
                                   <>
-                                    <Ban className="w-4 h-4 mr-1" />
+                                    <div className="w-4 h-4 mr-1">
+                                      <Ban />
+                                    </div>
                                     Suspend
                                   </>
                                 )}
@@ -431,7 +447,9 @@ export default function AdminPage() {
                                 className="bg-transparent"
                                 onClick={() => handleApproveContent(item.id)}
                               >
-                                <CheckCircle className="w-4 h-4 mr-1" />
+                                <div className="w-4 h-4 mr-1">
+                                  <CheckCircle />
+                                </div>
                                 Approve
                               </Button>
                             )}
@@ -441,7 +459,9 @@ export default function AdminPage() {
                               className="bg-transparent text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/20"
                               onClick={() => handleDeleteContent(item.id)}
                             >
-                              <Trash2 className="w-4 h-4 mr-1" />
+                              <div className="w-4 h-4 mr-1">
+                                <Trash2 />
+                              </div>
                               Delete
                             </Button>
                           </div>

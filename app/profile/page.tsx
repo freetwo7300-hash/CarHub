@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { User, Mail, MapPin, Award, Edit2 } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Award, Edit2, Send } from "@/lib/icons"
+import { Navigation } from "@/components/layout"
 
 export default function ProfilePage() {
   const userProfile = {
@@ -37,18 +37,24 @@ export default function ProfilePage() {
                   <h2 className="text-3xl font-bold mb-2">{userProfile.name}</h2>
                   <div className="space-y-1 text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
+                      <div className="w-4 h-4">
+                        <Send />
+                      </div>
                       <span>{userProfile.email}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4" />
+                      <div className="w-4 h-4">
+                        <Award />
+                      </div>
                       <span>{userProfile.reputation} reputation points</span>
                     </div>
                   </div>
                 </div>
               </div>
               <Button>
-                <Edit2 className="w-4 h-4 mr-2" />
+                <div className="w-4 h-4 mr-2">
+                  <Edit2 />
+                </div>
                 Edit Profile
               </Button>
             </div>

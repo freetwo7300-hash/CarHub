@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { AlertTriangle } from '@/lib/icons'
+import { AlertCircle } from '@/lib/icons'
 
 interface ErrorBoundaryProps {
   error: Error & { digest?: string }
@@ -26,7 +26,9 @@ export function ErrorBoundary({
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="max-w-md w-full p-8">
         <div className="text-center">
-          <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <div className="w-16 h-16 text-red-500 mx-auto mb-4">
+            <AlertCircle />
+          </div>
           <h1 className="text-2xl font-bold mb-2">{title}</h1>
           <p className="text-muted-foreground mb-6">{description}</p>
 

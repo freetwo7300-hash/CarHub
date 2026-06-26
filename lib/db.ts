@@ -7,7 +7,7 @@ import type {
   Guide,
   SavedItem,
   Notification,
-} from './schema'
+} from '@/types'
 
 // ============ USERS ============
 export async function getUsers(): Promise<User[]> {
@@ -165,24 +165,24 @@ export async function getSavedItems(userId: string): Promise<SavedItem[]> {
 
 export async function saveItem(
   userId: string,
-  itemId: string,
-  itemType: 'thread' | 'event' | 'guide',
+  resourceId: string,
+  resourceType: 'forum' | 'event' | 'guide',
 ): Promise<void> {
   const db = await getDB()
   await db.collection<SavedItem>('saved_items').insertOne({
-    id: `${userId}-${itemId}`,
+    id: `${userId}-${resourceId}`,
     userId,
-    itemId,
-    itemType,
+    resourceId,
+    resourceType,
     savedAt: new Date(),
-  })
+  } as SavedItem)
 }
 
-export async function removeSavedItem(userId: string, itemId: string): Promise<void> {
+export async function removeSavedItem(userId: string, resourceId: string): Promise<void> {
   const db = await getDB()
   await db
     .collection<SavedItem>('saved_items')
-    .deleteOne({ userId, itemId })
+    .deleteOne({ userId, resourceId })
 }
 
 // ============ NOTIFICATIONS ============

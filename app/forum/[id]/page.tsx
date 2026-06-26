@@ -1,48 +1,45 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { MessageCircle, ThumbsUp, Share2, Flag } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
 import Link from "next/link"
 import { getThreadById, getThreadComments } from "@/lib/db"
+import { ErrorDisplay, NotFoundDisplay, DetailPageSkeleton } from "@/components/shared"
+import { handleError } from "@/lib/errors"
+import { Suspense } from "react"
 
-export default async function ThreadDetailPage({ params }: { params: { id: string } }) {
+async function ThreadContent({ threadId }: { threadId: string }) {
   let thread = null
-  let comments = []
-  let error = null
+  let comments: typeof import("@/types").ForumComment[] = []
 
   try {
-    thread = await getThreadById(params.id)
+    thread = await getThreadById(threadId)
     if (thread) {
-      comments = await getThreadComments(params.id)
+      comments = await getThreadComments(threadId)
     }
   } catch (err) {
     console.error("Failed to fetch thread:", err)
-    error = "Failed to load thread"
+    const error = handleError(err)
+    return (
+      <ErrorDisplay
+        title={error.title}
+        message={error.message}
+        action={{ label: "Back to Forum", href: "/forum" }}
+      />
+    )
   }
 
   if (!thread) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <section className="py-12">
-          <div className="max-w-4xl mx-auto px-4">
-            <Card className="p-12 text-center">
-              <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground mb-4">Thread not found</p>
-              <Link href="/forum">
-                <Button>Back to Forum</Button>
-              </Link>
-            </Card>
-          </div>
-        </section>
-      </div>
+      <NotFoundDisplay
+        resource="Thread"
+        action={{ label: "Back to Forum", href: "/forum" }}
+      />
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
+    <>
       {/* Thread Header */}
       <section className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -106,15 +103,21 @@ export default async function ThreadDetailPage({ params }: { params: { id: strin
 
             <div className="flex flex-wrap gap-4 pt-6 border-t border-border">
               <Button variant="outline" size="sm">
-                <ThumbsUp className="w-4 h-4 mr-2" />
+                <div className="w-4 h-4 mr-2">
+                  <ThumbsUp />
+                </div>
                 Like
               </Button>
               <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
+                <div className="w-4 h-4 mr-2">
+                  <Share2 />
+                </div>
                 Share
               </Button>
               <Button variant="outline" size="sm">
-                <Flag className="w-4 h-4 mr-2" />
+                <div className="w-4 h-4 mr-2">
+                  <Flag />
+                </div>
                 Report
               </Button>
             </div>
@@ -123,7 +126,9 @@ export default async function ThreadDetailPage({ params }: { params: { id: strin
           {/* Comments Section */}
           <div>
             <h2 className="text-2xl font-bold flex items-center gap-2 mb-6">
-              <MessageCircle className="w-6 h-6" />
+              <div className="w-6 h-6">
+                <MessageCircle />
+              </div>
               Replies ({comments.length})
             </h2>
 
@@ -145,7 +150,9 @@ export default async function ThreadDetailPage({ params }: { params: { id: strin
                     <p className="text-muted-foreground mb-4">{comment.content}</p>
                     <div className="flex gap-2">
                       <Button variant="ghost" size="sm">
-                        <ThumbsUp className="w-4 h-4 mr-2" />
+                        <div className="w-4 h-4 mr-2">
+                          <ThumbsUp />
+                        </div>
                         {comment.likes}
                       </Button>
                     </div>
@@ -154,13 +161,27 @@ export default async function ThreadDetailPage({ params }: { params: { id: strin
               </div>
             ) : (
               <Card className="p-8 text-center">
-                <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <div className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50">
+                  <MessageCircle />
+                </div>
                 <p className="text-muted-foreground">No replies yet. Be the first to respond!</p>
               </Card>
             )}
           </div>
         </div>
       </section>
+    </>
+  )
+}
+
+export default function ThreadDetailPage({ params }: { params: { id: string } }) {
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <Suspense fallback={<DetailPageSkeleton />}>
+        {/* @ts-expect-error Async component */}
+        <ThreadContent threadId={params.id} />
+      </Suspense>
     </div>
   )
 }

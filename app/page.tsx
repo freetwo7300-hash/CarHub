@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
 import ChatButton from "@/components/chat-button"
-import NotificationCenter from "@/components/notification-center"
 import ScrollToTop from "@/components/scroll-to-top"
 import Link from "next/link"
 import TrendingSection from "@/components/trending-section"
@@ -83,7 +82,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <NotificationCenter />
       <ChatButton />
       <ScrollToTop />
 
@@ -173,7 +171,9 @@ export default function Home() {
                 <Card className="h-full p-6 hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-accent group">
                   <div className="flex items-start gap-4">
                     <div className="p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors">
-                      <feature.icon className="w-6 h-6 text-accent" />
+                      <div className="w-6 h-6 text-accent">
+                        <feature.icon />
+                      </div>
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>

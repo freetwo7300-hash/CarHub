@@ -1,30 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, Plus } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Plus } from "@/lib/icons"
+import { Navigation } from "@/components/layout"
 import Link from "next/link"
 import { getForumThreads } from "@/lib/db"
-import { ErrorDisplay } from "@/components/error-display"
-import { ListSkeleton } from "@/components/skeletons"
+import { ErrorDisplay, ListSkeleton } from "@/components/shared"
 import { handleError } from "@/lib/errors"
 import { Suspense } from "react"
-
-interface ForumThread {
-  id: string
-  title: string
-  author: {
-    id: string
-    name: string
-    avatar?: string
-  }
-  category: string
-  replies: number
-  views: number
-  tags: string[]
-  createdAt: Date
-  isPinned: boolean
-}
 
 const categories = ["All", "maintenance", "performance", "troubleshooting", "general"]
 
@@ -112,7 +95,9 @@ export default function ForumPage() {
             </div>
             <Link href="/forum/new">
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground w-full md:w-auto">
-                <Plus className="w-5 h-5 mr-2" />
+                <div className="w-5 h-5 mr-2">
+                  <Plus />
+                </div>
                 New Thread
               </Button>
             </Link>

@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
 import Link from "next/link"
 
 const categories = ["Maintenance", "Troubleshooting", "Performance", "General", "Other"]
@@ -36,8 +36,10 @@ export default function NewThreadPage() {
       {/* Header */}
       <section className="bg-card border-b border-border py-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/forum" className="flex items-center gap-2 text-accent hover:text-accent/80 mb-4">
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/forum" className="flex items-center gap-2 text-accent hover:text-accent/80 mb-4 w-fit">
+            <div className="w-4 h-4">
+              <ArrowLeft />
+            </div>
             Back to Forum
           </Link>
         </div>

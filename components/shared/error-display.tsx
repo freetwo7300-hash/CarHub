@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { AlertTriangle } from '@/lib/icons'
+import { AlertCircle } from '@/lib/icons'
 import Link from 'next/link'
 
 interface ErrorDisplayProps {
@@ -24,7 +24,13 @@ export function ErrorDisplay({
   return (
     <Card className="p-12 text-center">
       <div className="mb-6">
-        {icon || <AlertTriangle className="w-12 h-12 text-red-500 mx-auto" />}
+        {icon ? (
+          <div className="w-12 h-12 text-red-500 mx-auto">{icon}</div>
+        ) : (
+          <div className="w-12 h-12 text-red-500 mx-auto">
+            <AlertCircle />
+          </div>
+        )}
       </div>
       <h2 className="text-2xl font-bold mb-2">{title}</h2>
       <p className="text-muted-foreground mb-8">{message}</p>
@@ -75,7 +81,9 @@ interface LoadingErrorProps {
 export function LoadingError({ resource = 'content', action, retryFn }: LoadingErrorProps) {
   return (
     <Card className="p-12 text-center">
-      <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-6" />
+      <div className="w-12 h-12 text-amber-500 mx-auto mb-6">
+        <AlertCircle />
+      </div>
       <h2 className="text-2xl font-bold mb-2">Failed to Load</h2>
       <p className="text-muted-foreground mb-8">
         We couldn't load the {resource}. Please try again.

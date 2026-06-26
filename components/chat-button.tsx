@@ -39,7 +39,9 @@ export default function ChatButton() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-40 p-4 bg-accent hover:bg-accent/90 text-accent-foreground rounded-full shadow-lg transition-all duration-300 hover:scale-110 animate-slide-up"
       >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        <div className="w-6 h-6">
+          {isOpen ? <X /> : <MessageCircle />}
+        </div>
       </button>
 
       {/* Chat Window */}
@@ -74,7 +76,9 @@ export default function ChatButton() {
               className="flex-1 px-3 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
             />
             <Button size="sm" onClick={handleSend} className="bg-accent hover:bg-accent/90">
-              <Send className="w-4 h-4" />
+              <div className="w-4 h-4">
+                <Send />
+              </div>
             </Button>
           </div>
         </Card>

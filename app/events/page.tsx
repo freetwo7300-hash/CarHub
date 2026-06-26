@@ -2,30 +2,13 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Calendar, MapPin, Users } from "@/lib/icons"
-import Navigation from "@/components/navigation"
+import { Navigation } from "@/components/layout"
 import Link from "next/link"
 import { getEvents } from "@/lib/db"
-import { ErrorDisplay } from "@/components/error-display"
-import { ListSkeleton } from "@/components/skeletons"
+import { ErrorDisplay, ListSkeleton } from "@/components/shared"
 import { handleError } from "@/lib/errors"
 import { Suspense } from "react"
-
-interface Event {
-  id: string
-  title: string
-  description: string
-  date: Date
-  location: string
-  category: string
-  registeredCount: number
-  maxAttendees?: number
-  image: string
-  organizer: {
-    id: string
-    name: string
-    avatar?: string
-  }
-}
+import type { Event } from "@/types"
 
 const categories = ["All", "meetup", "show", "training", "workshop"]
 
@@ -73,7 +56,9 @@ async function EventsList() {
                   {/* Meta Info */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-border">
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-accent" />
+                      <div className="w-4 h-4 text-accent">
+                        <Calendar />
+                      </div>
                       <div>
                         <div className="font-semibold">
                           {new Date(event.date).toLocaleDateString()}
@@ -82,11 +67,15 @@ async function EventsList() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-accent" />
+                      <div className="w-4 h-4 text-accent">
+                        <MapPin />
+                      </div>
                       <div className="line-clamp-2">{event.location}</div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-4 h-4 text-accent" />
+                      <div className="w-4 h-4 text-accent">
+                        <Users />
+                      </div>
                       <div>
                         <div className="font-semibold">{event.registeredCount}</div>
                         <div className="text-xs text-muted-foreground">
@@ -115,7 +104,6 @@ async function EventsList() {
 }
 
 export default function EventsPage() {
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -124,7 +112,9 @@ export default function EventsPage() {
       <section className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-4">
-            <Calendar className="w-8 h-8" />
+            <div className="w-8 h-8">
+              <Calendar />
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold">Events & Meetups</h1>
           </div>
           <p className="text-primary-foreground/90 text-lg max-w-2xl">
@@ -132,17 +122,6 @@ export default function EventsPage() {
           </p>
         </div>
       </section>
-
-import { Suspense } from "react"
-
-      {/* Error Message */}
-      {error && (
-        <section className="bg-red-50 border-b border-red-200 py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-red-700">{error}</p>
-          </div>
-        </section>
-      )}
 
       {/* Search and Filters */}
       <section className="bg-card border-b border-border py-8">
@@ -180,6 +159,7 @@ import { Suspense } from "react"
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Suspense fallback={<ListSkeleton count={3} />}>
+            {/* @ts-expect-error Async component */}
             <EventsList />
           </Suspense>
         </div>

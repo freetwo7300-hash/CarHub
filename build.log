@@ -1,0 +1,74 @@
+﻿
+> my-v0-project@0.1.0 build
+> next build
+
+node.exe : [baseline-browser-mapping] The data in this module is 
+over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([baseline-brows...pin 
+   g@latest -D`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ ΓÜá `eslint` configuration in next.config.mjs is no longer 
+supported. See more info here: https://nextjs.org/docs/app/api-refe
+rence/cli/next#next-lint-options
+ ΓÜá Invalid next.config.mjs options detected: 
+ ΓÜá     Unrecognized key(s) in object: 'eslint'
+ ΓÜá See more info here: 
+https://nextjs.org/docs/messages/invalid-next-config
+   Γû▓ Next.js 16.0.0 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two 
+months old.  To ensure accurate Baseline data, please update: `npm 
+i baseline-browser-mapping@latest -D`
+ Γ£ô Compiled successfully in 30.2s
+   Skipping validation of types
+ ΓÜá Minimum recommended TypeScript version is v5.1.0, older 
+versions can potentially be incompatible with Next.js. Detected: 
+5.0.2
+   Collecting page data ...
+[baseline-browser-mapping] The data in this module is over two 
+months old.  To ensure accurate Baseline data, please update: `npm 
+i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two 
+months old.  To ensure accurate Baseline data, please update: `npm 
+i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two 
+months old.  To ensure accurate Baseline data, please update: `npm 
+i baseline-browser-mapping@latest -D`
+   Generating static pages (0/13) ...
+[baseline-browser-mapping] The data in this module is over two 
+months old.  To ensure accurate Baseline data, please update: `npm 
+i baseline-browser-mapping@latest -D`
+   Generating static pages (3/13) 
+   Generating static pages (6/13) 
+   Generating static pages (9/13) 
+ Γ£ô Generating static pages (13/13) in 15.9s
+   Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /
+Γö£ Γùï /_not-found
+Γö£ Γùï /admin
+Γö£ ╞Æ /api/events
+Γö£ ╞Æ /api/forum
+Γö£ ╞Æ /api/guides
+Γö£ Γùï /dashboard
+Γö£ Γùï /events
+Γö£ ╞Æ /events/[id]
+Γö£ Γùï /forum
+Γö£ ╞Æ /forum/[id]
+Γö£ Γùï /forum/new
+Γö£ Γùï /guides
+Γö£ ╞Æ /guides/[id]
+Γöö Γùï /profile
+
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
