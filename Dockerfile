@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for CarHub
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY pnpm-lock.yaml package.json ./
 RUN pnpm install --no-frozen-lockfile
 
 # Stage 2: Builder
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ COPY . .
 RUN pnpm build
 
 # Stage 3: Runtime (Production)
-FROM node:20-alpine AS runtime
+FROM node:24-alpine AS runtime
 
 WORKDIR /app
 
