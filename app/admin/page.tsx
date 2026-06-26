@@ -4,9 +4,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, MessageCircle, BookOpen, TrendingUp, AlertCircle, CheckCircle, Trash2, Ban, Search } from "@/lib/icons"
+import { Users, MessageCircle, BookOpen, AlertCircle, CheckCircle, Trash2, Ban, Search, BarChart3 } from "lucide-react"
 import { Navigation } from "@/components/layout"
 import { Input } from "@/components/ui/input"
+import { StatsCard } from "@/components/dashboard"
 
 interface User {
   id: string
@@ -173,42 +174,21 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* System Stats */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Users</p>
-                  <p className="text-3xl font-bold text-accent">{mockStats.totalUsers}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{mockStats.activeUsers} active</p>
-                </div>
-                <div className="w-8 h-8 text-accent opacity-50">
-                  <Users />
-                </div>
-              </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Posts</p>
-                  <p className="text-3xl font-bold text-accent">{mockStats.totalPosts}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Forum discussions</p>
-                </div>
-                <div className="w-8 h-8 text-accent opacity-50">
-                  <MessageCircle />
-                </div>
-              </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Content Items</p>
-                  <p className="text-3xl font-bold text-accent">{mockStats.totalGuides + mockStats.totalEvents}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Guides & events</p>
-                </div>
-                <div className="w-8 h-8 text-accent opacity-50">
-                  <BookOpen />
-                </div>
-              </div>
-            </Card>
+            <StatsCard
+              label="Total Users"
+              value={mockStats.totalUsers}
+              icon={<Users className="w-6 h-6" />}
+            />
+            <StatsCard
+              label="Total Posts"
+              value={mockStats.totalPosts}
+              icon={<MessageCircle className="w-6 h-6" />}
+            />
+            <StatsCard
+              label="Content Items"
+              value={mockStats.totalGuides + mockStats.totalEvents}
+              icon={<BookOpen className="w-6 h-6" />}
+            />
             <Card className="p-6 hover:shadow-lg transition-shadow border-red-200 dark:border-red-900">
               <div className="flex items-center justify-between">
                 <div>
@@ -216,9 +196,7 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-red-600">{mockStats.flaggedContent}</p>
                   <p className="text-xs text-muted-foreground mt-1">Needs review</p>
                 </div>
-                <div className="w-8 h-8 text-red-600 opacity-50">
-                  <AlertCircle />
-                </div>
+                <AlertCircle className="w-8 h-8 text-red-600 opacity-50" />
               </div>
             </Card>
           </div>
@@ -236,9 +214,7 @@ export default function AdminPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <div className="w-5 h-5 text-accent">
-                      <TrendingUp />
-                    </div>
+                    <BarChart3 className="w-5 h-5 text-accent" />
                     Community Growth
                   </h3>
                   <div className="space-y-3">
@@ -279,9 +255,7 @@ export default function AdminPage() {
 
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <div className="w-5 h-5 text-red-600">
-                      <AlertCircle />
-                    </div>
+                    <AlertCircle className="w-5 h-5 text-red-600" />
                     System Alerts
                   </h3>
                   <div className="space-y-3">
@@ -360,17 +334,13 @@ export default function AdminPage() {
                                 onClick={() => handleSuspendUser(user.id)}
                               >
                                 {user.status === "suspended" ? (
-                  <>
-                    <div className="w-4 h-4 mr-1">
-                      <CheckCircle />
-                    </div>
-                    Unsuspend
-                  </>
+                                  <>
+                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                    Unsuspend
+                                  </>
                                 ) : (
                                   <>
-                                    <div className="w-4 h-4 mr-1">
-                                      <Ban />
-                                    </div>
+                                    <Ban className="w-4 h-4 mr-1" />
                                     Suspend
                                   </>
                                 )}
@@ -447,9 +417,7 @@ export default function AdminPage() {
                                 className="bg-transparent"
                                 onClick={() => handleApproveContent(item.id)}
                               >
-                                <div className="w-4 h-4 mr-1">
-                                  <CheckCircle />
-                                </div>
+                                <CheckCircle className="w-4 h-4 mr-1" />
                                 Approve
                               </Button>
                             )}
@@ -459,9 +427,7 @@ export default function AdminPage() {
                               className="bg-transparent text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/20"
                               onClick={() => handleDeleteContent(item.id)}
                             >
-                              <div className="w-4 h-4 mr-1">
-                                <Trash2 />
-                              </div>
+                              <Trash2 className="w-4 h-4 mr-1" />
                               Delete
                             </Button>
                           </div>
