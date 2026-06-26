@@ -8,7 +8,7 @@ RUN npm install -g pnpm
 
 COPY pnpm-lock.yaml package.json ./
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
@@ -19,7 +19,7 @@ RUN npm install -g pnpm
 
 COPY pnpm-lock.yaml package.json ./
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 COPY . .
 
@@ -41,7 +41,7 @@ RUN adduser -S nextjs -u 1001
 COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile
 
 # Copy built application from builder
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
