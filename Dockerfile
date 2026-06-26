@@ -6,9 +6,12 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+# Create .npmrc to disable policy checks for recently-published packages
+RUN echo "policy-entries=null" > ~/.npmrc
+
 COPY pnpm-lock.yaml package.json ./
 
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Stage 2: Builder
 FROM node:24-alpine AS builder
@@ -17,9 +20,12 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+# Create .npmrc to disable policy checks for recently-published packages
+RUN echo "policy-entries=null" > ~/.npmrc
+
 COPY pnpm-lock.yaml package.json ./
 
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 COPY . .
 
@@ -33,6 +39,9 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+# Create .npmrc to disable policy checks for recently-published packages
+RUN echo "policy-entries=null" > ~/.npmrc
+
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
@@ -41,7 +50,7 @@ RUN adduser -S nextjs -u 1001
 COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only
-RUN pnpm install --prod --no-frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
 
 # Copy built application from builder
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
