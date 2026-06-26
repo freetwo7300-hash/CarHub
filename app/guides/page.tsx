@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { BookOpen, Clock } from "@/lib/icons"
 import { Navigation } from "@/components/layout"
 import Link from "next/link"
 import { getGuides } from "@/lib/db"
 import { ErrorDisplay, ListSkeleton } from "@/components/shared"
+import { GuidesFilter } from "@/components/guides/guides-filter"
 import { handleError } from "@/lib/errors"
 import { Suspense } from "react"
 import type { Guide } from "@/types"
@@ -136,36 +136,7 @@ export default function GuidesPage() {
       </section>
 
       {/* Search and Filters */}
-      <section className="bg-card border-b border-border py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6">
-            {/* Search */}
-            <div className="relative">
-              <Input
-                placeholder="Search guides..."
-                className="w-full"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3">Category</h3>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant="outline"
-                    size="sm"
-                    className="capitalize"
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <GuidesFilter />
 
       {/* Guides Grid */}
       <section className="py-12">

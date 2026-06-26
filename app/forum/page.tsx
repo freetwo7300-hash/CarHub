@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Plus } from "@/lib/icons"
 import { Navigation } from "@/components/layout"
 import Link from "next/link"
 import { getForumThreads } from "@/lib/db"
 import { ErrorDisplay, ListSkeleton } from "@/components/shared"
+import { ForumFilter } from "@/components/forum/forum-filter"
 import { handleError } from "@/lib/errors"
 import { Suspense } from "react"
 
@@ -106,29 +106,7 @@ export default function ForumPage() {
       </section>
 
       {/* Search and Filter */}
-      <section className="bg-card border-b border-border py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-4">
-            <Input
-              placeholder="Search discussions..."
-              defaultValue=""
-              className="w-full"
-            />
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant="outline"
-                  size="sm"
-                  className="capitalize"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <ForumFilter />
 
       {/* Threads List */}
       <section className="py-8">
