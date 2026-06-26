@@ -1,153 +1,53 @@
-"use client"
-
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { BookOpen, Clock, Search } from "@/lib/icons"
+import { BookOpen, Clock } from "@/lib/icons"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
+import { getGuides } from "@/lib/db"
 
 interface Guide {
   id: string
   title: string
   description: string
   category: string
-  difficulty: "Beginner" | "Intermediate" | "Advanced"
-  duration: string
+  difficulty: "beginner" | "intermediate" | "advanced"
+  estimatedTime: number
   views: number
-  rating: number
-  author: string
+  helpful: number
+  author: {
+    id: string
+    name: string
+    avatar?: string
+  }
   image: string
+  tags: string[]
 }
 
-const mockGuides: Guide[] = [
-  {
-    id: "1",
-    title: "Complete Oil Change Guide",
-    description: "Step-by-step instructions for changing your vehicle's oil and filter",
-    category: "Maintenance",
-    difficulty: "Beginner",
-    duration: "30 mins",
-    views: 5420,
-    rating: 4.8,
-    author: "John Mechanic",
-    image: "/oil-change.png",
-  },
-  {
-    id: "2",
-    title: "Brake Pad Replacement",
-    description: "Learn how to safely replace your brake pads and maintain stopping power",
-    category: "Maintenance",
-    difficulty: "Intermediate",
-    duration: "45 mins",
-    views: 3890,
-    rating: 4.7,
-    author: "Alex Technician",
-    image: "/brake-pads-close-up.png",
-  },
-  {
-    id: "3",
-    title: "Battery Maintenance & Replacement",
-    description: "Keep your battery healthy and learn when it's time for a replacement",
-    category: "Maintenance",
-    difficulty: "Beginner",
-    duration: "20 mins",
-    views: 2156,
-    rating: 4.9,
-    author: "Emma Care",
-    image: "/car-battery.png",
-  },
-  {
-    id: "4",
-    title: "Tire Rotation & Balancing",
-    description: "Extend tire life and improve handling with proper rotation and balancing",
-    category: "Maintenance",
-    difficulty: "Intermediate",
-    duration: "40 mins",
-    views: 4230,
-    rating: 4.6,
-    author: "Mike Expert",
-    image: "/tire-rotation.jpg",
-  },
-  {
-    id: "5",
-    title: "Air Filter Replacement",
-    description: "Improve engine performance by replacing your air filter regularly",
-    category: "Maintenance",
-    difficulty: "Beginner",
-    duration: "15 mins",
-    views: 1890,
-    rating: 4.8,
-    author: "Sarah Driver",
-    image: "/air-filter.png",
-  },
-  {
-    id: "6",
-    title: "Transmission Fluid Change",
-    description: "Complete guide to changing transmission fluid and maintaining smooth shifts",
-    category: "Maintenance",
-    difficulty: "Advanced",
-    duration: "60 mins",
-    views: 2340,
-    rating: 4.5,
-    author: "David Mechanic",
-    image: "/transmission-fluid.jpg",
-  },
-  {
-    id: "7",
-    title: "Spark Plug Replacement",
-    description: "Keep your engine running smoothly with fresh spark plugs",
-    category: "Maintenance",
-    difficulty: "Intermediate",
-    duration: "35 mins",
-    views: 3120,
-    rating: 4.7,
-    author: "John Mechanic",
-    image: "/spark-plugs.png",
-  },
-  {
-    id: "8",
-    title: "Coolant System Flush",
-    description: "Maintain proper engine temperature with a complete coolant system flush",
-    category: "Maintenance",
-    difficulty: "Intermediate",
-    duration: "50 mins",
-    views: 1650,
-    rating: 4.6,
-    author: "Alex Technician",
-    image: "/coolant-system.jpg",
-  },
-]
+const categories = ["All", "maintenance", "performance", "troubleshooting", "diy"]
 
-const categories = ["All", "Maintenance", "Troubleshooting", "Performance", "Safety"]
-const difficulties = ["All", "Beginner", "Intermediate", "Advanced"]
+const getDifficultyColor = (difficulty: string) => {
+  switch (difficulty) {
+    case "beginner":
+      return "bg-green-100 text-green-800"
+    case "intermediate":
+      return "bg-yellow-100 text-yellow-800"
+    case "advanced":
+      return "bg-red-100 text-red-800"
+    default:
+      return "bg-gray-100 text-gray-800"
+  }
+}
 
-export default function GuidesPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("All")
+export default async function GuidesPage() {
+  let guides: Guide[] = []
+  let error = null
 
-  const filteredGuides = mockGuides.filter((guide) => {
-    const matchesSearch =
-      guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guide.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "All" || guide.category === selectedCategory
-    const matchesDifficulty = selectedDifficulty === "All" || guide.difficulty === selectedDifficulty
-    return matchesSearch && matchesCategory && matchesDifficulty
-  })
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Beginner":
-        return "bg-green-100 text-green-800"
-      case "Intermediate":
-        return "bg-yellow-100 text-yellow-800"
-      case "Advanced":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
+  try {
+    guides = await getGuides(20, 0)
+  } catch (err) {
+    console.error("Failed to fetch guides:", err)
+    error = "Failed to load guides"
   }
 
   return (
@@ -162,10 +62,19 @@ export default function GuidesPage() {
             <h1 className="text-4xl md:text-5xl font-bold">Maintenance Guides</h1>
           </div>
           <p className="text-primary-foreground/90 text-lg max-w-2xl">
-            Learn how to maintain and repair your vehicle with our comprehensive step-by-step guides
+            Learn from expert mechanics and car enthusiasts
           </p>
         </div>
       </section>
+
+      {/* Error Message */}
+      {error && (
+        <section className="bg-red-50 border-b border-red-200 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-red-700">{error}</p>
+          </div>
+        </section>
+      )}
 
       {/* Search and Filters */}
       <section className="bg-card border-b border-border py-8">
@@ -173,12 +82,9 @@ export default function GuidesPage() {
           <div className="space-y-6">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
               <Input
                 placeholder="Search guides..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="w-full"
               />
             </div>
 
@@ -189,30 +95,11 @@ export default function GuidesPage() {
                 {categories.map((category) => (
                   <Button
                     key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
+                    variant="outline"
                     size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                    className={selectedCategory === category ? "bg-accent text-accent-foreground" : ""}
+                    className="capitalize"
                   >
                     {category}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Difficulty Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3">Difficulty Level</h3>
-              <div className="flex flex-wrap gap-2">
-                {difficulties.map((difficulty) => (
-                  <Button
-                    key={difficulty}
-                    variant={selectedDifficulty === difficulty ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedDifficulty(difficulty)}
-                    className={selectedDifficulty === difficulty ? "bg-accent text-accent-foreground" : ""}
-                  >
-                    {difficulty}
                   </Button>
                 ))}
               </div>
@@ -224,48 +111,60 @@ export default function GuidesPage() {
       {/* Guides Grid */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {filteredGuides.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredGuides.map((guide) => (
+          {guides.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {guides.map((guide) => (
                 <Link key={guide.id} href={`/guides/${guide.id}`}>
-                  <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-accent group flex flex-col">
+                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-accent group h-full flex flex-col">
                     {/* Image */}
-                    <div className="relative h-40 bg-muted overflow-hidden">
+                    <div className="h-48 bg-muted overflow-hidden">
                       <img
-                        src={guide.image || "/placeholder.svg"}
+                        src={guide.image || "/placeholder.jpg"}
                         alt={guide.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div
-                        className={`absolute top-3 right-3 px-3 py-1 rounded text-xs font-semibold ${getDifficultyColor(guide.difficulty)}`}
-                      >
-                        {guide.difficulty}
-                      </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-accent transition-colors line-clamp-2">
-                        {guide.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">{guide.description}</p>
+                    <div className="p-6 flex flex-col flex-1">
+                      {/* Header */}
+                      <div className="mb-4">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h3 className="text-lg font-semibold group-hover:text-accent transition-colors line-clamp-2">
+                            {guide.title}
+                          </h3>
+                        </div>
+                        <p className="text-muted-foreground text-sm line-clamp-2">{guide.description}</p>
+                      </div>
 
-                      {/* Meta Info */}
-                      <div className="space-y-3 pt-4 border-t border-border">
-                        <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="w-4 h-4" />
-                            {guide.duration}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-accent font-semibold">{guide.rating}</span>
-                            <span className="text-muted-foreground">★</span>
-                          </div>
+                      {/* Tags and Difficulty */}
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${getDifficultyColor(guide.difficulty)}`}>
+                          {guide.difficulty}
+                        </span>
+                        {guide.tags.slice(0, 2).map((tag) => (
+                          <span key={tag} className="px-2 py-1 bg-muted rounded text-xs capitalize">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="mt-auto pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-3 h-3" />
+                          <span>{guide.estimatedTime} min</span>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{guide.views.toLocaleString()} views</span>
-                          <span>by {guide.author}</span>
+                        <div>
+                          <span className="font-semibold text-accent">{guide.views}</span>
+                          <span> views</span>
                         </div>
+                      </div>
+
+                      {/* Author */}
+                      <div className="mt-3 pt-3 border-t border-border text-xs">
+                        <span className="text-muted-foreground">by</span>
+                        <span className="font-semibold ml-1">{guide.author.name}</span>
                       </div>
                     </div>
                   </Card>
@@ -275,7 +174,7 @@ export default function GuidesPage() {
           ) : (
             <Card className="p-12 text-center">
               <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No guides found. Try adjusting your filters.</p>
+              <p className="text-muted-foreground">No guides found. Check back soon!</p>
             </Card>
           )}
         </div>
