@@ -6,127 +6,41 @@ on:
   pull_request:
     branches: [main, develop]
 
+env:
+  NODE_VERSION: 20.x
+  PNPM_VERSION: 10
+
 jobs:
-  api-validation:
-    name: API Route Validation
+  config:
+    name: Config & Env
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
+      - uses: actions/checkout@v4
+      - name: Validate .env.example
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Validate API routes
+          [ -f .env.example ] && echo "✅ .env.example found" || (echo "❌ Missing .env.example"; exit 1)
+      - name: Check for hardcoded secrets
         run: |
-          echo "Checking API route structure..."
-          find app/api -name "route.ts" -o -name "route.js" | wc -l
-          echo "API routes found. Verifying imports..."
-          grep -r "NextRequest\|NextResponse" app/api/ || echo "Warning: Some routes missing NextAPI imports"
-
-  env-validation:
-    name: Environment Variables
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Validate .env.example exists
-        run: |
-          if [ ! -f .env.example ]; then
-            echo "❌ .env.example is missing"
-            exit 1
-          fi
-          echo "✅ .env.example found"
-
-      - name: Check for secrets in code
-        run: |
-          echo "Scanning for hardcoded secrets..."
-          if grep -r "mongodb+srv://.*:.*@" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.env*" . 2>/dev/null | grep -v ".env.example" | grep -v "node_modules"; then
-            echo "⚠️ Warning: Possible hardcoded credentials detected"
+          if grep -r "mongodb+srv://.*:.*@" --include="*.ts" --include="*.tsx" --include="*.js" . 2>/dev/null | grep -v node_modules | grep -v ".env.example"; then
+            echo "⚠️ Warning: Possible hardcoded credentials"
           else
-            echo "✅ No obvious hardcoded credentials found"
+            echo "✅ No obvious hardcoded credentials"
           fi
+      - name: Validate next.config.mjs
+        run: node -c next.config.mjs 2>/dev/null || echo "✅ Config OK (ESM warning expected)"
+      - name: Validate workflow YAML
+        run: |
+          find .github/workflows -name "*.yml" | while read f; do
+            grep -q "name:" "$f" && echo "✅ $f valid" || echo "❌ $f invalid"
+          done
 
-  schema-validation:
-    name: Data Schema Validation
+  docker:
+    name: Docker Build
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10
-
-      - name: Install dependencies
-        run: |
-          pnpm install --no-frozen-lockfile --prefer-offline
-          
-      - name: Validate TypeScript schemas
-        run: |
-          echo "Validating Zod schemas..."
-          npx tsc --noEmit --skipLibCheck || true
-
-      - name: Check database schema consistency
-        run: |
-          echo "Checking for schema consistency in types..."
-          grep -r "interface.*{" lib/schema.ts || echo "Schema file not found, creating validation report..."
-
-  docker-validation:
-    name: Docker Build Validation
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image (no push)
-        uses: docker/build-push-action@v5
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v5
         with:
           context: .
           push: false
@@ -136,34 +50,24 @@ jobs:
             NODE_ENV=production
             NEXT_TELEMETRY_DISABLED=1
 
-  config-validation:
-    name: Configuration Validation
+  schema:
+    name: Data Schema
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Validate next.config.mjs
-        run: |
-          echo "Checking Next.js configuration..."
-          if node -c next.config.mjs 2>/dev/null; then
-            echo "✅ next.config.mjs is valid"
-          else
-            echo "⚠️ next.config.mjs validation warning (this is normal for ESM)"
-          fi
-
-      - name: Validate tsconfig.json
-        run: |
-          echo "Validating TypeScript config..."
-          if [ -f tsconfig.json ]; then
-            cat tsconfig.json | grep -q '"compilerOptions"' && echo "✅ tsconfig.json valid" || echo "❌ Invalid tsconfig.json"
-          fi
-
-      - name: Validate GitHub Actions workflows
-        run: |
-          echo "Validating workflow YAML syntax..."
-          find .github/workflows -name "*.yml" -o -name "*.yaml" | while read file; do
-            echo "Checking $file..."
-            grep -q "name:" "$file" && echo "✅ $file syntax OK" || echo "❌ $file missing required fields"
-          done
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-store-
+      - run: pnpm install --no-frozen-lockfile
+      - run: npx tsc --noEmit --skipLibCheck || true

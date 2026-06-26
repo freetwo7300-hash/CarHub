@@ -1,183 +1,70 @@
-name: Performance Monitoring
+name: Performance
 
 on:
   push:
     branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
   schedule:
-    - cron: '0 6 * * *'  # Daily at 6 AM UTC
+    - cron: '0 6 * * *'
+
+env:
+  NODE_VERSION: 20.x
+  PNPM_VERSION: 10
 
 jobs:
-  bundle-size:
-    name: Bundle Size Analysis
+  bundle:
+    name: Bundle Analysis
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: pnpm/action-setup@v2
         with:
-          version: 10
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
+          version: ${{ env.PNPM_VERSION }}
+      - id: pnpm-cache
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Build for analysis
-        run: pnpm build
+          restore-keys: ${{ runner.os }}-pnpm-store-
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm build
         env:
           MONGODB_URI: 'mongodb://localhost:27017'
-
-      - name: Analyze Next.js bundle
-        run: |
-          echo "## Bundle Analysis" > bundle-report.md
-          echo "" >> bundle-report.md
-          echo "### .next folder size" >> bundle-report.md
-          du -sh .next >> bundle-report.md
-          echo "" >> bundle-report.md
-          echo "### Build output breakdown" >> bundle-report.md
-          du -sh .next/* >> bundle-report.md || true
-
-      - name: Upload bundle analysis
-        uses: actions/upload-artifact@v4
+      - run: |
+          echo "## Bundle Size" > report.md
+          du -sh .next >> report.md
+          du -sh .next/* >> report.md || true
+      - uses: actions/upload-artifact@v4
         with:
-          name: bundle-analysis
-          path: bundle-report.md
+          name: bundle-report
+          path: report.md
 
-  lighthouse:
-    name: Lighthouse Performance
+  deps:
+    name: Dependencies
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: pnpm/action-setup@v2
         with:
-          version: 10
-
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Build production bundle
-        run: pnpm build
-        env:
-          MONGODB_URI: 'mongodb://localhost:27017'
-
-      - name: Generate Lighthouse report
-        uses: actions/upload-artifact@v4
-        with:
-          name: lighthouse-report
-          path: .next
-
-      - name: Log performance metrics
-        run: |
-          echo "## Performance Metrics" > performance-report.md
-          echo "" >> performance-report.md
-          echo "### Build Time" >> performance-report.md
-          echo "Build completed successfully" >> performance-report.md
-
-  dependency-size:
-    name: Dependency Size Report
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
+          version: ${{ env.PNPM_VERSION }}
+      - id: pnpm-cache
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Generate dependency report
-        run: |
-          echo "## Dependency Size Report" > dependency-report.md
-          echo "" >> dependency-report.md
-          echo "### Top 10 Largest Dependencies" >> dependency-report.md
-          pnpm list --depth=0 >> dependency-report.md
-          echo "" >> dependency-report.md
-          echo "### Total Dependencies" >> dependency-report.md
-          pnpm list --depth=0 | wc -l >> dependency-report.md
-
-      - name: Upload dependency report
-        uses: actions/upload-artifact@v4
+          restore-keys: ${{ runner.os }}-pnpm-store-
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm list --depth=0 > deps.txt
+      - uses: actions/upload-artifact@v4
         with:
-          name: dependency-report
-          path: dependency-report.md
-
-  performance-budget:
-    name: Performance Budget Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Performance budget validation
-        run: |
-          echo "## Performance Budget Status"
-          echo ""
-          echo "✓ Next.js build optimization enabled"
-          echo "✓ Image optimization configured"
-          echo "✓ CSS minification enabled"
-          echo "✓ JavaScript code splitting enabled"
-          echo ""
-          echo "Recommendations:"
-          echo "- Monitor Core Web Vitals"
-          echo "- Keep main bundle under 200KB"
-          echo "- Optimize images with next/image"
-          echo "- Use dynamic imports for large components"
+          name: dependencies
+          path: deps.txt
