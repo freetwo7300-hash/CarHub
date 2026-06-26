@@ -1,3 +1,5 @@
+'use server'
+
 import { MongoClient, MongoClientOptions } from 'mongodb'
 import { attachDatabasePool } from '@vercel/functions'
 

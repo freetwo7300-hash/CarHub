@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MessageCircle, BookOpen, Calendar, Heart, TrendingUp, Clock, Plus } from "@/lib/icons"
 import { Navigation } from "@/components/layout"
 import { StatsCard, QuickActionCard, ActivityItem, EmptySection } from "@/components/dashboard"
-import Link from "next/link"
 import type { DashboardActivity, SavedItem, DashboardStats } from "@/types"
 
 export default function DashboardPage() {
