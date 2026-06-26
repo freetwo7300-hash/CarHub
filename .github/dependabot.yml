@@ -25,6 +25,4 @@ updates:
       - dependency-type: "production"
       - dependency-type: "development"
     rebase-strategy: "auto"
-    ignore:
-      # Add packages to ignore if needed
-      # - dependency-name: "package-name"
+    ignore: []
