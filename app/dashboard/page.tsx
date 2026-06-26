@@ -1,4 +1,98 @@
-"use client"
+"import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Bookmark, MessageCircle, Calendar, TrendingUp } from "@/lib/icons"
+import Navigation from "@/components/navigation"
+import Link from "next/link"
+
+export default async function DashboardPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+
+      {/* Header */}
+      <section className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">Welcome to Your Dashboard</h1>
+          <p className="text-primary-foreground/90">Quick access to your favorite content and activities</p>
+        </div>
+      </section>
+
+      {/* Quick Stats */}
+      <section className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm">Saved Items</p>
+                  <p className="text-3xl font-bold mt-2">0</p>
+                </div>
+                <Bookmark className="w-8 h-8 text-accent" />
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm">Forum Posts</p>
+                  <p className="text-3xl font-bold mt-2">0</p>
+                </div>
+                <MessageCircle className="w-8 h-8 text-accent" />
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm">Events Joined</p>
+                  <p className="text-3xl font-bold mt-2">0</p>
+                </div>
+                <Calendar className="w-8 h-8 text-accent" />
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm">Reputation</p>
+                  <p className="text-3xl font-bold mt-2">0</p>
+                </div>
+                <TrendingUp className="w-8 h-8 text-accent" />
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Activity */}
+      <section className="py-8 bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-6">Recent Activity</h2>
+          <p className="text-muted-foreground">Your recent activities will appear here</p>
+        </div>
+      </section>
+
+      {/* Saved Items */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-6">Saved Items</h2>
+          <Card className="p-8 text-center">
+            <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <p className="text-muted-foreground mb-4">No saved items yet</p>
+            <div className="flex gap-2 justify-center">
+              <Link href="/forum">
+                <Button variant="outline">Explore Forum</Button>
+              </Link>
+              <Link href="/events">
+                <Button variant="outline">Browse Events</Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
+      </section>
+    </div>
+  )
+}"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"

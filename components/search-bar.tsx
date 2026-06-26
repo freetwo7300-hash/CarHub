@@ -33,29 +33,22 @@ export default function SearchBar() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [isOpen, setIsOpen] = useState(false)
 
-  // Mock search results
-  const mockResults: SearchResult[] = [
-    { id: "1", title: "Oil Change Guide", type: "guide", description: "Complete oil change tutorial" },
-    { id: "2", title: "Tire Rotation Discussion", type: "forum", description: "Best practices for tire rotation" },
-    { id: "3", title: "Brake Workshop", type: "event", description: "Learn brake maintenance" },
-    { id: "4", title: "Battery Replacement", type: "guide", description: "Step-by-step battery guide" },
-    { id: "5", title: "Engine Diagnostics", type: "forum", description: "Troubleshooting engine issues" },
-  ]
+  // Mock search results - TODO: replace with API call
+  const mockResults: SearchResult[] = []
 
-  useEffect(() => {
-    if (query.length > 0) {
-      const filtered = mockResults.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.description.toLowerCase().includes(query.toLowerCase()),
-      )
-      setResults(filtered)
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setQuery(value)
+
+    if (value.length > 0) {
+      // TODO: Call API endpoint for search
+      setResults([])
       setIsOpen(true)
     } else {
       setResults([])
       setIsOpen(false)
     }
-  }, [query])
+  }
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -78,7 +71,7 @@ export default function SearchBar() {
           type="text"
           placeholder="Search guides, forums, events..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleSearch}
           className="pl-10 pr-10 glass-effect"
         />
         {query && (
