@@ -4,28 +4,32 @@ FROM node:24-alpine AS deps
 
 WORKDIR /app
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+# Disable pnpm supply-chain policy checks in Docker builds
+ENV PNPM_CONFIG_IGNORE_SCRIPTS=true
+
 RUN npm install -g pnpm
 
-# Create .npmrc to disable policy checks for recently-published packages
-RUN echo "policy-entries=null" > ~/.npmrc
+COPY pnpm-lock.yaml package.json .npmrc ./
 
-COPY pnpm-lock.yaml package.json ./
-
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile
 
 # Stage 2: Builder
 FROM node:24-alpine AS builder
 
 WORKDIR /app
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+# Disable pnpm supply-chain policy checks in Docker builds
+ENV PNPM_CONFIG_IGNORE_SCRIPTS=true
+
 RUN npm install -g pnpm
 
-# Create .npmrc to disable policy checks for recently-published packages
-RUN echo "policy-entries=null" > ~/.npmrc
+COPY pnpm-lock.yaml package.json .npmrc ./
 
-COPY pnpm-lock.yaml package.json ./
-
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile
 
 COPY . .
 
@@ -39,18 +43,20 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
-# Create .npmrc to disable policy checks for recently-published packages
-RUN echo "policy-entries=null" > ~/.npmrc
-
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
+
+# Set environment for production install
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV PNPM_CONFIG_IGNORE_SCRIPTS=true
 
 # Install production dependencies only
-RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --prod --no-frozen-lockfile
 
 # Copy built application from builder
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
