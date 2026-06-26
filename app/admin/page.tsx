@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, MessageCircle, BookOpen, AlertCircle, CheckCircle, Trash2, Ban, Search, BarChart3 } from "lucide-react"
+import { Users, MessageCircle, BookOpen, AlertCircle, CheckCircle, Trash2, Ban, Search, TrendingUp } from "lucide-react"
 import { Navigation } from "@/components/layout"
 import { Input } from "@/components/ui/input"
 import { StatsCard } from "@/components/dashboard"
@@ -177,17 +177,29 @@ export default function AdminPage() {
             <StatsCard
               label="Total Users"
               value={mockStats.totalUsers}
-              icon={<Users className="w-6 h-6" />}
+              icon={
+                <div className="w-8 h-8">
+                  <Users />
+                </div>
+              }
             />
             <StatsCard
               label="Total Posts"
               value={mockStats.totalPosts}
-              icon={<MessageCircle className="w-6 h-6" />}
+              icon={
+                <div className="w-8 h-8">
+                  <MessageCircle />
+                </div>
+              }
             />
             <StatsCard
               label="Content Items"
               value={mockStats.totalGuides + mockStats.totalEvents}
-              icon={<BookOpen className="w-6 h-6" />}
+              icon={
+                <div className="w-8 h-8">
+                  <BookOpen />
+                </div>
+              }
             />
             <Card className="p-6 hover:shadow-lg transition-shadow border-red-200 dark:border-red-900">
               <div className="flex items-center justify-between">
@@ -196,7 +208,9 @@ export default function AdminPage() {
                   <p className="text-3xl font-bold text-red-600">{mockStats.flaggedContent}</p>
                   <p className="text-xs text-muted-foreground mt-1">Needs review</p>
                 </div>
-                <AlertCircle className="w-8 h-8 text-red-600 opacity-50" />
+                <div className="w-8 h-8 text-red-600 opacity-50">
+                  <AlertCircle />
+                </div>
               </div>
             </Card>
           </div>
@@ -214,7 +228,9 @@ export default function AdminPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-accent" />
+                    <div className="w-5 h-5 text-accent">
+                      <TrendingUp />
+                    </div>
                     Community Growth
                   </h3>
                   <div className="space-y-3">
@@ -255,7 +271,9 @@ export default function AdminPage() {
 
                 <Card className="p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
+                    <div className="w-5 h-5 text-red-600">
+                      <AlertCircle />
+                    </div>
                     System Alerts
                   </h3>
                   <div className="space-y-3">
@@ -284,7 +302,9 @@ export default function AdminPage() {
             <TabsContent value="users" className="space-y-4">
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-6">
-                  <Search className="w-5 h-5 text-muted-foreground" />
+                  <div className="w-5 h-5 text-muted-foreground">
+                    <Search />
+                  </div>
                   <Input
                     placeholder="Search users by name or email..."
                     value={searchQuery}
@@ -359,7 +379,9 @@ export default function AdminPage() {
             <TabsContent value="content" className="space-y-4">
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-6">
-                  <Search className="w-5 h-5 text-muted-foreground" />
+                  <div className="w-5 h-5 text-muted-foreground">
+                    <Search />
+                  </div>
                   <Input
                     placeholder="Search content by title..."
                     value={searchQuery}
