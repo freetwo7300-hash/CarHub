@@ -1,0 +1,27 @@
+[build]
+command = "pnpm build"
+publish = ".next"
+functions = "netlify/functions"
+
+[build.environment]
+NODE_VERSION = "24"
+PNPM_VERSION = "10"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[headers]]
+for = "/_next/static/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/public/*"
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+[functions]
+directory = "netlify/functions"
+node_bundler = "pnpm"
