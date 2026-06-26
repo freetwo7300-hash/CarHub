@@ -142,7 +142,6 @@ export default function GuidesPage() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Suspense fallback={<ListSkeleton count={6} />}>
-            {/* @ts-expect-error Async component */}
             <GuidesList />
           </Suspense>
         </div>

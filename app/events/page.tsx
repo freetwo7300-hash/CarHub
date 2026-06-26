@@ -127,7 +127,6 @@ export default function EventsPage() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Suspense fallback={<ListSkeleton count={3} />}>
-            {/* @ts-expect-error Async component */}
             <EventsList />
           </Suspense>
         </div>
